@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/Button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/DropdownMenu";
 import { Link } from "@/lib/navigation";
-import { User as UserType } from "@/types";
-import { ChevronDown, User, X } from "lucide-react";
+import { ChevronLeft, LogOut, User } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useAuthUser } from "@/components/hooks/UseAuthUser";
+import { useAuthService } from "@/features/auth/hooks/useAuth";
+import { getUserLinks } from "./constant";
 
-interface UserMenuProps {
-  user: UserType | null;
-  isAuthenticated: boolean;
-  t: (key: string, values?: Record<string, string | number | Date> | undefined) => string;
-  logout: () => void;
-}
+const DesktopUserMenu = () => {
+  const t = useTranslations("Layout");
+  const { user, isAuthenticated } = useAuthUser();
+  const { logout } = useAuthService();
 
-const DesktopUserMenu = ({ user, isAuthenticated, logout, t }: UserMenuProps) => {
   return !isAuthenticated ? (
     <Button asChild size="sm" className="w-full">
       <Link href="/sign-in">{t("navbar.sign-in")}</Link>
@@ -26,7 +26,7 @@ const DesktopUserMenu = ({ user, isAuthenticated, logout, t }: UserMenuProps) =>
           <div className="flex flex-col items-start text-left">
             <span className="text-sm leading-none font-medium">{user?.username}</span>
           </div>
-          <ChevronDown size={16} className="ml-auto" />
+          <ChevronLeft size={16} className="ml-auto" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-background space-y-1">
@@ -41,9 +41,15 @@ const DesktopUserMenu = ({ user, isAuthenticated, logout, t }: UserMenuProps) =>
             </div>
           </Link>
         </DropdownMenuItem>
+        {user &&
+          getUserLinks(user.role).map(({ id, href }) => (
+            <DropdownMenuItem key={id} asChild>
+              <Link href={href}>{t(`navbar.user.${id}`)}</Link>
+            </DropdownMenuItem>
+          ))}
         <DropdownMenuItem onClick={logout}>
           <span className="text-destructive hover:text-destructive/80 flex cursor-pointer items-center gap-2">
-            <X size={16} />
+            <LogOut size={16} />
             {t("navbar.sign-out")}
           </span>
         </DropdownMenuItem>
@@ -52,7 +58,11 @@ const DesktopUserMenu = ({ user, isAuthenticated, logout, t }: UserMenuProps) =>
   );
 };
 
-const MobileUserMenu = ({ user, isAuthenticated, logout, t }: UserMenuProps) => {
+const MobileUserMenu = () => {
+  const t = useTranslations("Layout");
+  const { user, isAuthenticated } = useAuthUser();
+  const { logout } = useAuthService();
+
   return (
     <div className="border-t pt-4">
       {!isAuthenticated ? (
@@ -70,13 +80,21 @@ const MobileUserMenu = ({ user, isAuthenticated, logout, t }: UserMenuProps) => 
               <p className="text-muted-foreground text-xs">{user?.email}</p>
             </div>
           </Link>
+          {user &&
+            getUserLinks(user.role).map(({ id, href }) => (
+              <Link key={id} href={href}>
+                <Button variant="outline" size="sm" className="w-full cursor-pointer justify-start">
+                  {t(`navbar.user.${id}`)}
+                </Button>
+              </Link>
+            ))}
           <Button
             variant="outline"
             size="sm"
             className="text-destructive hover:text-destructive/80 w-full cursor-pointer justify-start"
             onClick={logout}
           >
-            <X size={16} className="mr-2" />
+            <LogOut size={16} className="mr-2" />
             {t("navbar.sign-out")}
           </Button>
         </div>

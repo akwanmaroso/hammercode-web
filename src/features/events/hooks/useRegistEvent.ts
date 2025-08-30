@@ -1,56 +1,67 @@
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { uploadsService } from "@/services/uploads";
 import { eventsService } from "@/services/events";
 import { EventType, RegistrationForm } from "@/domains/Events";
-import { useToast } from "@/components/hooks/UseToast";
-import { useState } from "react";
-import { useTranslations } from "next-intl";
 
 export const useRegistEvent = (data: EventType) => {
   const t = useTranslations("EventsPage");
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [nameImage, setNameImage] = useState<string | null>("");
+  // const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
   const registEvent = async (formData: RegistrationForm) => {
     setIsLoading(true);
 
     try {
-      const { net_amount, image_proof_payment, ...registDetails } = formData;
-      const eventPrice = data?.price as number;
+      const { image_proof_payment, ...registDetails } = formData;
 
-      if (net_amount < eventPrice) {
-        throw new Error(t("EventRegistration.error.net-amount-low"));
+      interface NewPayload extends RegistrationForm {
+        event_id: number;
       }
 
-      const {
-        data: { file_name: uploadedImageFileName },
-      } = await uploadsService.uploadImage(image_proof_payment, "payment", "event");
-
-      const registPayload = {
+      let registPayload: NewPayload = {
+        event_id: 0,
+        image_proof_payment: "",
         ...registDetails,
-        net_amount,
-        image_proof_payment: uploadedImageFileName,
-        event_id: data?.id as number,
       };
 
-      const res = await eventsService.registEvent(registPayload);
+      if (!nameImage) {
+        console.log("image proof payment", image_proof_payment);
+        const {
+          data: { file_name: uploadedImageFileName },
+        } = await uploadsService.uploadImage(image_proof_payment as File, "payment", "event");
 
-      toast({
-        title: t("EventRegistration.success.title"),
+        setNameImage(uploadedImageFileName);
+        registPayload = {
+          ...registDetails,
+          image_proof_payment: uploadedImageFileName as string,
+          event_id: data?.id as number,
+        };
+      } else {
+        registPayload = {
+          ...registDetails,
+          image_proof_payment: nameImage as string,
+          event_id: data?.id as number,
+        };
+      }
+
+      const res = await eventsService.registerEvent(registPayload);
+
+      toast.success(`${t("EventRegistration.success.title")}`, {
         description: `${t("EventRegistration.success.description")} ${res.data.order_no}`,
       });
-
+      setNameImage("");
       setIsLoading(false);
-      setIsDialogOpen(false);
     } catch (error) {
-      toast({
-        title: t("EventRegistration.failure.title"),
+      // console.log(error);
+      toast.error(t("EventRegistration.failure.title"), {
         description: error instanceof Error ? error.message : t("EventRegistration.failure.description"),
-        variant: "destructive",
       });
       setIsLoading(false);
     }
   };
 
-  return { registEvent, isLoading, isDialogOpen, setIsDialogOpen };
+  return { registEvent, isLoading };
 };

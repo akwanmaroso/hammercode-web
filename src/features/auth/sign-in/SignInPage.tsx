@@ -1,19 +1,21 @@
 "use client";
-import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { LockKeyhole, Mail } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginForm, loginSchema } from "@/domains/Auth";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/Form";
-import { useAuth } from "../hooks/useAuth";
+import { LoginForm, loginSchema } from "@/domains/Auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link } from "@/lib/navigation";
+import { useAuthService } from "../hooks/useAuth";
+import { useAuthUser } from "@/components/hooks/UseAuthUser";
 
 const SignInPage = () => {
   const t = useTranslations("Auth.SignInPage");
-  const { login, isLoading } = useAuth();
+  const { login, isLoading } = useAuthService();
+  const { setUser } = useAuthUser();
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -24,13 +26,16 @@ const SignInPage = () => {
   });
 
   const onSubmit: SubmitHandler<LoginForm> = (formData) => {
-    login(formData);
+    login(formData).then((data) => {
+      setUser(data!.data.payload);
+    });
   };
 
   return (
     <div className="relative h-screen w-screen overflow-hidden p-4">
-      <div className="from-hmc-base-lightblue absolute -top-20 -left-20 size-70 rounded-full bg-radial to-transparent to-70% blur-3xl" />
-      <div className="from-hmc-base-lightblue absolute -right-20 -bottom-20 size-70 rounded-full bg-radial to-transparent to-70% blur-3xl" />
+      <div className="from-hmc-base-lightblue/20 absolute -top-32 -right-32 size-96 rounded-full bg-radial to-transparent to-70% blur-3xl" />
+      <div className="from-hmc-base-lightblue/20 absolute -bottom-32 -left-32 size-96 rounded-full bg-radial to-transparent to-70% blur-3xl" />
+
       <div className="flex h-full flex-row-reverse items-center justify-center gap-12 overflow-hidden">
         <Image
           priority
@@ -40,7 +45,7 @@ const SignInPage = () => {
           alt="Sign In Background"
           className="hidden lg:block"
         />
-        <div className="flex max-w-xl flex-col justify-center gap-6">
+        <div className="flex w-full flex-col justify-center gap-6 md:w-1/3">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold">{t("title")}</h1>
             <p className="text-muted-foreground text-sm">{t("description")}</p>
@@ -84,6 +89,11 @@ const SignInPage = () => {
                   </FormItem>
                 )}
               />
+              <p className="group text-hmc-base text-right text-xs">
+                <Link href="/forgot-password" className="text-hmc-base group-hover:underline">
+                  {t("forgot-password")}
+                </Link>
+              </p>
               <div className="flex flex-col gap-4">
                 <Button
                   className="from-hmc-base-blue to-hmc-base-lightblue rounded-2xl bg-linear-to-l text-white"
@@ -94,7 +104,7 @@ const SignInPage = () => {
                 </Button>
                 <p className="group text-center text-xs">
                   {t("no-account")}{" "}
-                  <Link href="/sign-up" className="text-hmc-base group-hover:underline">
+                  <Link href="/sign-up" className="text-hmc-base-blue font-semibold group-hover:underline">
                     {t("sign-up")}
                   </Link>
                 </p>

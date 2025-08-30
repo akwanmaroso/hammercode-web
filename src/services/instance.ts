@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import Cookies from "js-cookie";
 
 const config = {
   timeout: 5000,
@@ -10,6 +11,10 @@ const config = {
 const injectInterceptors = (instance: AxiosInstance): AxiosInstance => {
   instance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
+      const token = Cookies.get("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
       return config;
     },
     (error: AxiosError) => {
@@ -31,9 +36,7 @@ const injectInterceptors = (instance: AxiosInstance): AxiosInstance => {
 
 export const fetcher: AxiosInstance = injectInterceptors(
   axios.create({
-    baseURL: "https://lms-be-development.hammercode.org/api/v1/",
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
     ...config,
   })
 );
-
-export const fetcherLocal: AxiosInstance = injectInterceptors(axios.create(config));

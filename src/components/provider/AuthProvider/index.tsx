@@ -1,23 +1,24 @@
 "use client";
 
-import { createContext, ReactNode, useEffect, useState } from "react";
-import { User, UserContextType } from "@/types";
-import { decodeToken } from "@/lib/jwt";
+import { createContext, ReactNode, useState } from "react";
+import { AuthJwtPayload, UserContextType } from "@/types";
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+interface AuthProviderProps {
+  /**
+   * JWT Payload taken from cookie
+   * @default undefined
+   */
+  payload?: AuthJwtPayload;
+  children: ReactNode;
+}
 
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
+export const AuthProvider = ({ payload, children }: AuthProviderProps) => {
+  const [user, setUser] = useState(payload || null);
+  const isAuthenticated = !!user;
 
-    const { username, email, role, isTokenExpired } = decodeToken(token);
-    if (!isTokenExpired) {
-      setUser({ username, email, role });
-    }
-  }, []);
-
-  return <UserContext.Provider value={{ user, setUser, isAuthenticated: !!user }}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ user, setUser, isAuthenticated, isLoading: false }}>{children}</UserContext.Provider>
+  );
 };

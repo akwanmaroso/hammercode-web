@@ -2,6 +2,9 @@ import { useFormatter } from "next-intl";
 
 export function useFormatDate(date?: string | Date) {
   const format = useFormatter();
+
+  if (!date) return "";
+
   const dateTime = new Date(date as string);
 
   return format.dateTime(dateTime, {
@@ -18,3 +21,15 @@ export function useFormatPrice(price?: number) {
     minimumFractionDigits: 0,
   }).format(price as number);
 }
+
+export const useFormatDateEvent = (dateString: string): string => {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat("id-ID", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+};

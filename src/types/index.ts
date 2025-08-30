@@ -4,16 +4,19 @@ export interface AuthJwtPayload extends JwtPayload {
   username: string;
   email: string;
   role: string;
+  // phone_number: string;
 }
 
 export interface User {
   username: string;
   email: string;
-  role: string;
+  // phone_number: string;
+  role: string | "admin";
 }
 
 export interface UserContextType {
   user: User | null;
-  setUser: (user: User | null) => void;
   isAuthenticated: boolean;
+  setUser: (user: User) => void;
+  isLoading: boolean;
 }

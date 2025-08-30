@@ -9,7 +9,13 @@
       "sign-in": "Sign In",
       "sign-up": "Sign Up",
       "sign-out": "Sign Out",
-      "profile": "Profile"
+      "profile": "Profile",
+      "user": {
+        "profile": "Profile",
+        "dashboard": "Dashboard",
+        "my-blogs": "My Blogs",
+        "my-events": "My Events"
+      }
     },
     "breadcrumb": {
       "link-1": "About Us",
@@ -17,6 +23,11 @@
       "link-3": "Testimonial",
       "link-4": "Blogs",
       "link-5": "Donate"
+    },
+    "not_found": {
+      "heading": "Page Not Found",
+      "sub-heading": "Oops! The page you're looking for doesn't exist",
+      "btn": "Back to Home"
     }
   },
   "LocaleLayout": {
@@ -51,16 +62,17 @@
     },
     "SignInPage": {
       "title": "Welcome Back 👋",
-      "description": "Let's started! Please sign in to unlock the best learning resources.",
+      "description": "Sign in to connect, learn, and grow together.",
       "enter-email": "Enter Email",
       "enter-password": "Enter Password",
       "no-account": "Don't have an account yet?",
       "sign-in": "Sign In",
-      "sign-up": "Sign Up"
+      "sign-up": "Sign Up",
+      "forgot-password": "Forgot Password?"
     },
     "SignUpPage": {
-      "title": "Welcome 👋",
-      "description": "Let's started! Please sign up to unlock the best learning resources.",
+      "title": "Let's Join Us! 👋",
+      "description": "Sign up to start your journey!",
       "enter-username": "Enter Username",
       "enter-email": "Enter Email",
       "enter-password": "Enter Password",
@@ -68,6 +80,19 @@
       "have-account": "Already have an account?",
       "sign-in": "Sign In",
       "sign-up": "Sign Up"
+    },
+    "ForgotPassPage": {
+      "title": "Forgot Password",
+      "description": "Enter your email to reset your password.",
+      "enter-email": "Enter Email",
+      "reset-password": "Reset Password"
+    },
+    "ResetPassPage": {
+      "title": "Reset Password",
+      "description": "Enter your new password.",
+      "enter-password": "Enter Password",
+      "enter-confirm-password": "Enter Confirm Password",
+      "reset-password": "Reset Password"
     }
   },
   "HomePage": {
@@ -199,5 +224,67 @@
   "TestimonialPage": {
     "title": "Testimonial",
     "description": "Some friends and alumni who feel the benefits from Hammercode"
+  },
+  "MyEventPage": {
+    "title": "My Events",
+    "description": "List of registered events"
+  },
+  "MyBlogPage": {
+    "title": "My Blogs",
+    "description": "List of post and blog article",
+    "not-found": "No blogs found."
+  },
+  "Profile": {
+    "validation": {
+      "username-required": "Username is required",
+      "fullname-required": "Fullname is required",
+      "date-of-birth-required": "Date of birth is required",
+      "gender-required": "Please select a gender",
+      "phone-number-required": "Phone number is required",
+      "address-required": "Address is required",
+      "github-invalid-url": "Please enter a valid GitHub URL",
+      "linkedin-invalid-url": "Please enter a valid LinkedIn URL",
+      "personal-web-invalid-url": "Please enter a valid personal website URL"
+    },
+    "toast": {
+      "update-success": "Profile updated successfully!"
+    },
+    "form": {
+      "title": {
+        "account": "Account Information",
+        "information": "Additional Information"
+      },
+      "tab": {
+        "account": "Account",
+        "information": "Information"
+      },
+      "placeholder": {
+        "username": "Enter your username",
+        "fullname": "Enter your full name",
+        "date-of-birth": "Pick a date",
+        "gender": "Select gender",
+        "phone-number": "Enter your phone number",
+        "address": "Enter your address",
+        "github": "Enter your GitHub account",
+        "linkedin": "Enter your LinkedIn account",
+        "personal-web": "Enter your personal website"
+      },
+      "label": {
+        "username": "Username",
+        "fullname": "Full Name",
+        "date-of-birth": "Date of Birth",
+        "gender": "Gender",
+        "phone-number": "Phone Number",
+        "address": "Address",
+        "github": "GitHub",
+        "linkedin": "LinkedIn",
+        "personal-web": "Personal Website"
+      },
+      "save-button": "Save Profile"
+    },
+    "gender": {
+      "male": "Male",
+      "female": "Female"
+    }
   }
 }

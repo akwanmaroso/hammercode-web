@@ -1,15 +1,28 @@
-import { getAllBlogs, getBlogsByCategory } from "@/lib/mdx";
+import { BlogPost } from "@/lib/mdx";
 import { Link } from "@/lib/navigation";
-import BlogCard from "./components/BlogCard";
+import { CategoryFilter } from "./components/CategoriesFilter";
+import BlogList from "./components/BlogList";
 
-const BlogPage = async ({ category }: { category?: string }) => {
-  const sanitizedCategory = category?.replace(/\/$/, "");
-  const blogs = sanitizedCategory ? await getBlogsByCategory(sanitizedCategory) : await getAllBlogs();
+interface BlogPageProps {
+  allBlogs: BlogPost[];
+  sanitizedCategory?: string;
+  page?: number;
+  perPage?: number;
+}
+
+const BlogPage = ({ allBlogs, sanitizedCategory, page = 1, perPage = 1 }: BlogPageProps) => {
+  const totalBlogs = allBlogs.length;
+  const totalPages = Math.ceil(totalBlogs / perPage);
+  const startIndex = (page - 1) * perPage;
+  const endIndex = startIndex + perPage;
+
+  const blogs = allBlogs.slice(startIndex, endIndex);
+
   const categories = ["technology", "tutorial", "news", "announcement"];
 
   return (
     <section className="container mx-auto px-5 pt-24 pb-28">
-      <header className="mb-8">
+      <header className="my-8">
         <h1 className="text-hmc-base-blue text-xl font-bold sm:text-3xl">
           {sanitizedCategory
             ? `${sanitizedCategory.charAt(0).toUpperCase() + sanitizedCategory.slice(1)} Blogs`
@@ -22,6 +35,7 @@ const BlogPage = async ({ category }: { category?: string }) => {
         <div className="mb-6 flex flex-wrap gap-2">
           <Link
             href={`/blogs`}
+            prefetch={true}
             className={`rounded-full px-4 py-2 text-sm transition-colors ${
               !sanitizedCategory
                 ? "bg-hmc-base-lightblue text-white"
@@ -30,22 +44,7 @@ const BlogPage = async ({ category }: { category?: string }) => {
           >
             All
           </Link>
-          {categories.map((cat) => {
-            console.log(category, cat);
-            return (
-              <Link
-                key={cat}
-                href={`/blogs?category=${cat}`}
-                className={`rounded-full px-4 py-2 text-sm transition-colors ${
-                  sanitizedCategory === cat
-                    ? "bg-hmc-base-lightblue text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                }`}
-              >
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
-              </Link>
-            );
-          })}
+          <CategoryFilter categories={categories} sanitizedCategory={sanitizedCategory} />
         </div>
       </header>
 
@@ -56,15 +55,10 @@ const BlogPage = async ({ category }: { category?: string }) => {
           </p>
         </div>
       ) : (
-        <div className="grid gap-6">
-          {blogs.map((blog) => (
-            <div key={blog.slug}>
-              <BlogCard blog={blog} />
-            </div>
-          ))}
-        </div>
+        <BlogList blogs={blogs} currentPage={page} totalPages={totalPages} />
       )}
     </section>
   );
 };
+
 export default BlogPage;
